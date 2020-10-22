@@ -4,33 +4,22 @@ const time = document.querySelector('.time'),
   name = document.querySelector('.name'),
   focus = document.querySelector('.focus');
 
-// Options
-const showAmPm = true;
-
 // Show Time
 function showTime() {
-  let today = new Date(),
-    hour = today.getHours(),
-    min = today.getMinutes(),
-    sec = today.getSeconds();
-
-  // Set AM or PM
-  const amPm = hour >= 12 ? 'PM' : 'AM';
-
-  // 12hr Format
-  hour = hour % 12 || 12;
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
 
   // Output Time
-  time.innerHTML = `${hour}<span>:</span>${addZero(min)}<span>:</span>${addZero(
-    sec
-  )} ${showAmPm ? amPm : ''}`;
+  time.innerHTML = new Date().toLocaleString('ru', options);
 
   setTimeout(showTime, 1000);
-}
-
-// Add Zeros
-function addZero(n) {
-  return (parseInt(n, 10) < 10 ? '0' : '') + n;
 }
 
 // Set Background and Greeting
@@ -38,21 +27,33 @@ function setBgGreet() {
   let today = new Date(),
     hour = today.getHours();
 
-  if (hour < 12) {
+  // четыре времени суток:
+  // утро 6:00-12:00,
+  // день 12:00-18:00,
+  // вечер 18:00-24:00,
+  // ночь 24:00-6:00.
+
+  if (hour < 12 && hour >= 6) {
     // Morning
-    document.body.style.backgroundImage =
-      "url('https://i.ibb.co/7vDLJFb/morning.jpg')";
+    let ramdomImg = Math.floor(Math.random() * Math.floor(Morning.length));
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Morning[ramdomImg].image}')`;
     greeting.textContent = 'Good Morning, ';
   } else if (hour < 18) {
     // Afternoon
-    document.body.style.backgroundImage =
-      "url('https://i.ibb.co/3mThcXc/afternoon.jpg')";
+    let ramdomImg = Math.floor(Math.random() * Math.floor(Afternoon.length));
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Afternoon[ramdomImg].image}')`;
     greeting.textContent = 'Good Afternoon, ';
-  } else {
+  } else if (hour > 18 && hour < 24) {
     // Evening
-    document.body.style.backgroundImage =
-      "url('https://i.ibb.co/924T2Wv/night.jpg')";
+    let ramdomImg = Math.floor(Math.random() * Math.floor(Evening.length));
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Evening[ramdomImg].image}')`;
     greeting.textContent = 'Good Evening, ';
+  } else {
+    // Night
+    let ramdomImg = Math.floor(Math.random() * Math.floor(Night.length));
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Night[ramdomImg].image}')`;
+
+    greeting.textContent = 'Good Night, ';
     document.body.style.color = 'white';
   }
 }
@@ -67,10 +68,10 @@ function getName() {
 }
 
 // Set Name
-function setName(e) {
+function setName(e) {  
   if (e.type === 'keypress') {
     // Make sure enter is pressed
-    if (e.which == 13 || e.keyCode == 13) {
+    if (e.which == 13 || e.keyCode == 13) {      
       localStorage.setItem('name', e.target.innerText);
       name.blur();
     }
@@ -111,3 +112,36 @@ showTime();
 setBgGreet();
 getName();
 getFocus();
+
+
+// смена фона каждую минуту
+let startScript = (new Date().getMinutes() + 1) % 60; //Берем текущий час например 21 прибавляем 1, 21 + 1 = 22 это час когда нужно запустить скрипт
+loop(); //Вызываем наш цикл
+function loop() {
+  let date = new Date(); //Берем текущее время  
+  if (date.getMinutes() == startScript) {
+    //Если минут равны нулю и текущий час тому в котором нужно запустить скрипт
+    startScript = (startScript + 1) % 60; //прибавляем +1 к часу в котором нужно запустить скрипт
+    setBgGreet(); // и запускаем скрипт
+  }
+  setTimeout(loop, 300); //проверка текущего времени 1 раз в 30 секунд, если нужно чтобы скрипт запускался с точностью до секунды (22:00:00) поставить ~500
+}
+
+// Цитата
+
+// если смена цитаты у вас не работает, вероятно, исчерпался лимит API. в консоли ошибка 403
+// скопируйте код себе и запустите со своего компьютера
+const blockquote = document.querySelector('blockquote');
+const figcaption = document.querySelector('figcaption');
+
+// если в ссылке заменить lang=en на lang=ru, цитаты будут на русском языке
+// префикс https://cors-anywhere.herokuapp.com используем для доступа к данным с других сайтов если браузер возвращает ошибку Cross-Origin Request Blocked 
+async function getQuote() {  
+  const url = `https://cors-anywhere.herokuapp.com/https://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en`;
+  const res = await fetch(url);
+  const data = await res.json(); 
+  blockquote.textContent = data.quoteText;
+  figcaption.textContent = data.quoteAuthor;
+}
+document.addEventListener('DOMContentLoaded', getQuote);
+btn.addEventListener('click', getQuote);
