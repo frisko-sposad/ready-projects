@@ -1,8 +1,10 @@
 // DOM Elements
-const time = document.querySelector('.time'),
-  greeting = document.querySelector('.greeting'),
-  name = document.querySelector('.name'),
-  focus = document.querySelector('.focus');
+const time = document.querySelector('.time');
+const greeting = document.querySelector('.greeting');
+const name = document.querySelector('.name');
+const focus = document.querySelector('.focus');
+
+const btn = document.querySelector('.btn');
 
 // Show Time
 function showTime() {
@@ -68,10 +70,10 @@ function getName() {
 }
 
 // Set Name
-function setName(e) {  
+function setName(e) {
   if (e.type === 'keypress') {
     // Make sure enter is pressed
-    if (e.which == 13 || e.keyCode == 13) {      
+    if (e.which == 13 || e.keyCode == 13) {
       localStorage.setItem('name', e.target.innerText);
       name.blur();
     }
@@ -106,6 +108,7 @@ name.addEventListener('keypress', setName);
 name.addEventListener('blur', setName);
 focus.addEventListener('keypress', setFocus);
 focus.addEventListener('blur', setFocus);
+btn.addEventListener('click', setBgGreet);
 
 // Run
 showTime();
@@ -113,12 +116,11 @@ setBgGreet();
 getName();
 getFocus();
 
-
 // смена фона каждую минуту
 let startScript = (new Date().getMinutes() + 1) % 60; //Берем текущий час например 21 прибавляем 1, 21 + 1 = 22 это час когда нужно запустить скрипт
 loop(); //Вызываем наш цикл
 function loop() {
-  let date = new Date(); //Берем текущее время  
+  let date = new Date(); //Берем текущее время
   if (date.getMinutes() == startScript) {
     //Если минут равны нулю и текущий час тому в котором нужно запустить скрипт
     startScript = (startScript + 1) % 60; //прибавляем +1 к часу в котором нужно запустить скрипт
@@ -135,11 +137,11 @@ const blockquote = document.querySelector('blockquote');
 const figcaption = document.querySelector('figcaption');
 
 // если в ссылке заменить lang=en на lang=ru, цитаты будут на русском языке
-// префикс https://cors-anywhere.herokuapp.com используем для доступа к данным с других сайтов если браузер возвращает ошибку Cross-Origin Request Blocked 
-async function getQuote() {  
+// префикс https://cors-anywhere.herokuapp.com используем для доступа к данным с других сайтов если браузер возвращает ошибку Cross-Origin Request Blocked
+async function getQuote() {
   const url = `https://cors-anywhere.herokuapp.com/https://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en`;
   const res = await fetch(url);
-  const data = await res.json(); 
+  const data = await res.json();
   blockquote.textContent = data.quoteText;
   figcaption.textContent = data.quoteAuthor;
 }
