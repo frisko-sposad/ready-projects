@@ -39,6 +39,8 @@ body {
 
 .btn-block {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn {
@@ -48,19 +50,19 @@ body {
   font-size: 1rem;
   border-radius: 0.25rem;
   color: #000000;
-  cursor: pointer;  
+  cursor: pointer;
   margin: 10px 10px;
 }
 
 .btn:hover {
-  opacity: 0.5;  
+  opacity: 0.5;
 }
 
-.btn:active {  
-  outline: none;  
+.btn:active {
+  outline: none;
 }
 
-.btn:focus {  
+.btn:focus {
   outline: none;
 }
 
@@ -80,17 +82,21 @@ p {
 .quote,
 .container {
   margin: 10px;
+  height: 100px;
 }
 
 .blockquote {
   padding: 10px;
 }
 .time {
+  display: flex;
+  align-items: center;
   padding: 10px;
   font-size: 4rem;
+  height: 200px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .time {
     font-size: 2rem;
   }
