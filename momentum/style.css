@@ -16,18 +16,52 @@ body {
   color: #000000;
 }
 
+.weather-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.weather-icon {
+  background-color: rgb(70, 189, 216);
+  background-image: url(../momentum/assets/images/Rain_Light_Sun.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80% 80%;
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
+  min-height: 35px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+}
+
+.btn-block {
+  display: flex;
+}
+
 .btn {
-  border: none;
+  border: 1px solid black;
+  background: transparent;
   padding: 0.5rem;
   font-size: 1rem;
   border-radius: 0.25rem;
-  color: #fff;
-  cursor: pointer;
-  background-color: cornflowerblue;    
+  color: #000000;
+  cursor: pointer;  
+  margin: 10px 10px;
 }
 
-.time {
-  font-size: 4rem;
+.btn:hover {
+  opacity: 0.5;  
+}
+
+.btn:active {  
+  outline: none;  
+}
+
+.btn:focus {  
+  outline: none;
 }
 
 h1 {
@@ -35,12 +69,29 @@ h1 {
 }
 
 h2 {
+  font-size: 1.5rem;
   margin-bottom: 0.5rem;
   opacity: 0.8;
 }
 
+p {
+  font-size: 0.8rem;
+}
+.quote,
+.container {
+  margin: 10px;
+}
+
+.blockquote {
+  padding: 10px;
+}
+.time {
+  padding: 10px;
+  font-size: 4rem;
+}
+
 @media (max-width: 700px) {
   .time {
-    font-size: 6rem;
+    font-size: 2rem;
   }
 }

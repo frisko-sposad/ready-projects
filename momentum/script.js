@@ -4,7 +4,8 @@ const greeting = document.querySelector('.greeting');
 const name = document.querySelector('.name');
 const focus = document.querySelector('.focus');
 
-const btn = document.querySelector('.btn');
+const btnBackground = document.getElementById('btn-background');
+const btnQuote = document.getElementById('btn-quote');
 
 // Show Time
 function showTime() {
@@ -38,31 +39,34 @@ function setBgGreet() {
   if (hour < 12 && hour >= 6) {
     // Morning
     let ramdomImg = Math.floor(Math.random() * Math.floor(Morning.length));
-    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Morning[ramdomImg].image}')`;
-    greeting.textContent = 'Good Morning, ';
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.6) 0%, rgba(99, 99, 99, 0.6) 100%), url('${Morning[ramdomImg].image}')`;
+    greeting.textContent = 'Что-то ранова для того, чтоб вылезти из кроватки, ';
   } else if (hour < 18) {
     // Afternoon
     let ramdomImg = Math.floor(Math.random() * Math.floor(Afternoon.length));
-    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Afternoon[ramdomImg].image}')`;
-    greeting.textContent = 'Good Afternoon, ';
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.6) 0%, rgba(99, 99, 99, 0.6) 100%), url('${Afternoon[ramdomImg].image}')`;
+    greeting.textContent = 'Уже день, а всё равно хочется спать, ';
   } else if (hour > 18 && hour < 24) {
     // Evening
     let ramdomImg = Math.floor(Math.random() * Math.floor(Evening.length));
-    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Evening[ramdomImg].image}')`;
-    greeting.textContent = 'Good Evening, ';
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.6) 0%, rgba(99, 99, 99, 0.6) 100%), url('${Evening[ramdomImg].image}')`;
+    greeting.textContent = 'Уже вечер, скоро спать, ';
   } else {
     // Night
     let ramdomImg = Math.floor(Math.random() * Math.floor(Night.length));
-    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.5) 0%, rgba(99, 99, 99, 0.5) 100%), url('${Night[ramdomImg].image}')`;
+    document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.6) 0%, rgba(99, 99, 99, 0.6) 100%), url('${Night[ramdomImg].image}')`;
 
-    greeting.textContent = 'Good Night, ';
+    greeting.textContent = 'Задай цель, пойти спать и уйди спать, ';
     document.body.style.color = 'white';
   }
 }
 
 // Get Name
 function getName() {
-  if (localStorage.getItem('name') === null) {
+  if (
+    localStorage.getItem('name') === null ||
+    localStorage.getItem('name') === ''
+  ) {
     name.textContent = '[Enter Name]';
   } else {
     name.textContent = localStorage.getItem('name');
@@ -71,10 +75,28 @@ function getName() {
 
 // Set Name
 function setName(e) {
+  if (
+    e.target.textContent === '' &&
+    ((e.type === 'keydown' && (e.which == 13 || e.keyCode == 13)) ||
+      e.type === 'blur')
+  ) {
+    if (
+      localStorage.getItem('name') === null ||
+      localStorage.getItem('name').trim() === ''
+    ) {
+      e.target.innerText = '[Enter Name]';
+    } else {
+      e.target.innerText = localStorage.getItem('name').trim();
+    }
+  }
   if (e.type === 'keypress') {
     // Make sure enter is pressed
     if (e.which == 13 || e.keyCode == 13) {
-      localStorage.setItem('name', e.target.innerText);
+      if (e.target.innerText.trim() === '') {
+        localStorage.setItem('name', '[Enter Name]');
+      } else {
+        localStorage.setItem('name', e.target.innerText);
+      }
       name.blur();
     }
   } else {
@@ -93,10 +115,28 @@ function getFocus() {
 
 // Set Focus
 function setFocus(e) {
+  if (
+    e.target.textContent.trim() === '' &&
+    ((e.type === 'keydown' && (e.which == 13 || e.keyCode == 13)) ||
+      e.type === 'blur')
+  ) {
+    if (
+      localStorage.getItem('focus') === null ||
+      localStorage.getItem('focus').trim() === ''
+    ) {
+      e.target.innerText = '[Enter Focus]';
+    } else {
+      e.target.innerText = localStorage.getItem('focus').trim();
+    }
+  }
   if (e.type === 'keypress') {
     // Make sure enter is pressed
     if (e.which == 13 || e.keyCode == 13) {
-      localStorage.setItem('focus', e.target.innerText);
+      if (e.target.innerText.trim() === '') {
+        localStorage.setItem('focus', '[Enter Focus]');
+      } else {
+        localStorage.setItem('focus', e.target.innerText);
+      }
       focus.blur();
     }
   } else {
@@ -104,11 +144,10 @@ function setFocus(e) {
   }
 }
 
-name.addEventListener('keypress', setName);
-name.addEventListener('blur', setName);
-focus.addEventListener('keypress', setFocus);
-focus.addEventListener('blur', setFocus);
-btn.addEventListener('click', setBgGreet);
+// Delete text on click
+function setOnClick(e) {
+  e.target.textContent = '';
+}
 
 // Run
 showTime();
@@ -139,11 +178,22 @@ const figcaption = document.querySelector('figcaption');
 // если в ссылке заменить lang=en на lang=ru, цитаты будут на русском языке
 // префикс https://cors-anywhere.herokuapp.com используем для доступа к данным с других сайтов если браузер возвращает ошибку Cross-Origin Request Blocked
 async function getQuote() {
-  const url = `https://cors-anywhere.herokuapp.com/https://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en`;
+  const url = `https://cors-anywhere.herokuapp.com/https://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=ru`;
   const res = await fetch(url);
   const data = await res.json();
   blockquote.textContent = data.quoteText;
   figcaption.textContent = data.quoteAuthor;
 }
+
 document.addEventListener('DOMContentLoaded', getQuote);
-btn.addEventListener('click', getQuote);
+
+focus.addEventListener('click', setOnClick);
+name.addEventListener('click', setOnClick);
+
+name.addEventListener('keypress', setName);
+name.addEventListener('blur', setName);
+focus.addEventListener('keypress', setFocus);
+focus.addEventListener('blur', setFocus);
+
+btnQuote.addEventListener('click', getQuote); // кнопка смены цитаты
+btnBackground.addEventListener('click', setBgGreet); // кнопка смены фона
