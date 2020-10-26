@@ -4,6 +4,11 @@ const greeting = document.querySelector('.greeting');
 const name = document.querySelector('.name');
 const focus = document.querySelector('.focus');
 
+const weatherIcon = document.querySelector('.weather-icon');
+const temperature = document.querySelector('.temperature');
+const weatherDescription = document.querySelector('.weather-description');
+const city = document.querySelector('.city');
+
 const btnBackground = document.getElementById('btn-background');
 const btnQuote = document.getElementById('btn-quote');
 
@@ -149,12 +154,6 @@ function setOnClick(e) {
   e.target.textContent = '';
 }
 
-// Run
-showTime();
-setBgGreet();
-getName();
-getFocus();
-
 // смена фона каждую минуту
 let startScript = (new Date().getMinutes() + 1) % 60; //Берем текущий час например 21 прибавляем 1, 21 + 1 = 22 это час когда нужно запустить скрипт
 loop(); //Вызываем наш цикл
@@ -185,6 +184,40 @@ async function getQuote() {
   figcaption.textContent = data.quoteAuthor;
 }
 
+// Show Weather
+async function getWeather() {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.textContent}&lang=ru&appid=b6b867ad033c9b7ce0bfc29b8095d4af&units=metric`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  weatherIcon.className = 'weather-icon owf';
+  weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+  temperature.textContent = `${Math.round(data.main.temp)}°C`;
+  weatherDescription.textContent = data.weather[0].description;
+}
+
+function setCity(event) {
+  if (event.code === 'Enter') {
+    getWeather();
+    city.blur();
+  }
+}
+
+// Get City
+function getCity() {
+  if (
+    localStorage.getItem('city') === null ||
+    localStorage.getItem('city') === ''
+  ) {
+    city.textContent = 'Moscow';
+  } else {
+    city.textContent = localStorage.getItem('city');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', getWeather);
+city.addEventListener('keypress', setCity);
+
 document.addEventListener('DOMContentLoaded', getQuote);
 
 focus.addEventListener('click', setOnClick);
@@ -197,3 +230,10 @@ focus.addEventListener('blur', setFocus);
 
 btnQuote.addEventListener('click', getQuote); // кнопка смены цитаты
 btnBackground.addEventListener('click', setBgGreet); // кнопка смены фона
+
+// Run
+showTime();
+setBgGreet();
+getName();
+getFocus();
+getCity();
