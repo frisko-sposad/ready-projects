@@ -45,7 +45,7 @@ function setBgGreet() {
     // Morning
     let ramdomImg = Math.floor(Math.random() * Math.floor(Morning.length));
     document.body.style.backgroundImage = `linear-gradient(rgba(99, 99, 99, 0.6) 0%, rgba(99, 99, 99, 0.6) 100%), url('${Morning[ramdomImg].image}')`;
-    greeting.textContent = 'Что-то ранова для того, чтоб вылезти из кроватки, ';
+    greeting.textContent = 'Что-то рановато для того, чтоб вылезти из кроватки, ';
   } else if (hour < 18) {
     // Afternoon
     let ramdomImg = Math.floor(Math.random() * Math.floor(Afternoon.length));
